@@ -16,7 +16,4 @@
 Trạng thái đầu vào (Initial State) được cho ngẫu nhiên.
 Thực hiện cả 5 thuật toán tìm kiếm (cho phép sử dụng thư viện simpleai) để giải quyết bàn cờ.
 Mục tiêu: đưa ô trống vào vị trí trung tâm và các số được sắp xếp theo thứ tự mong muốn.*
-    **GOAL:**
-    1 2 3
-    8 0 4
-    7 6 5
+
