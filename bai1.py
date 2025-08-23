@@ -28,3 +28,18 @@ def uniform_cost_search(N, A, n0, DICH):
             if neighbor not in closed:
                 heapq.heappush(fringe, (cost + step_cost, neighbor, path + [neighbor]))
     return "NO SOLUTION"
+def depth_first_search(N, A, n0, DICH):
+    fringe = [(n0, [n0])]
+    close = set()
+    while fringe:
+        n, path = fringe.pop()
+        close.add(n)
+        if n in DICH:
+            return f"SOLUTION path: {path}"
+        neighbors = A.get(n, [])
+        if neighbors: 
+            for v in reversed(neighbors):
+                if v not in close:
+                    fringe.insert(0, (v, path + [v]))
+    return "NO SOLUTION"
+               
