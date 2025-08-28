@@ -42,4 +42,14 @@ def depth_first_search(N, A, n0, DICH):
                 if v not in close:
                     fringe.insert(0, (v, path + [v]))
     return "NO SOLUTION"
-               
+def depth_limited_search(A, n0, DICH, limit):
+    fringe = [(n0, [n0], 0)]
+    while fringe:
+        n, path, depth = fringe.pop()
+        if n in DICH:
+            return f"SOLUTION path: {path}"
+        if depth < limit:
+            for v in reversed(A.get(n, [])):
+                if v not in path:
+                    fringe.append((v, path + [v], depth + 1))
+    return "NO SOLUTION"
