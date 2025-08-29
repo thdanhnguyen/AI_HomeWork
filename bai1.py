@@ -40,7 +40,7 @@ def depth_first_search(N, A, n0, DICH):
         if neighbors: 
             for v in reversed(neighbors):
                 if v not in close:
-                    fringe.insert(0, (v, path + [v]))
+                    fringe.append((v, path + [v]))
     return "NO SOLUTION"
 
 def depth_limited_search(N, A, n0, DICH, limit):
