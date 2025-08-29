@@ -45,18 +45,7 @@ class EightPuzzleProblem(SearchProblem):
         return 1
 
 def random_initial_state():
-    nums = list(range(9))
-    while True:
-        random.shuffle(nums)
-        state = tuple(tuple(nums[i*3:(i+1)*3]) for i in range(3))
-        flat = sum(state, ())
-        inv = 0
-        for i in range(8):
-            for j in range(i+1, 9):
-                if flat[i] and flat[j] and flat[i] > flat[j]:
-                    inv += 1
-        if inv % 2 == 0:
-            return state
+    return ((1, 2, 3), (8, 4, 5), (7, 6, 0))
 
 def print_state(state):
     for row in state:
@@ -71,35 +60,35 @@ def main():
 
     print('--- BFS ---')
 
-    result = breadth_first(problem)
+    result = breadth_first(problem, graph_search=True)
     print('Steps:', len(result.path())-1)
     for action, state in result.path():
         print('Action:', action)
         print_state(state)
 
     print('--- DFS ---')
-    result = depth_first(problem)
+    result = depth_first(problem, graph_search=True)
     print('Steps:', len(result.path())-1)
     for action, state in result.path():
         print('Action:', action)
         print_state(state)
 
     print('--- UCS ---')
-    result = uniform_cost(problem)
+    result = uniform_cost(problem, graph_search=True)
     print('Steps:', len(result.path())-1)
     for action, state in result.path():
         print('Action:', action)
         print_state(state)
 
     print('--- DLS (depth=20) ---')
-    result = limited_depth_first(problem, 20)
+    result = limited_depth_first(problem, 20, graph_search=True)
     print('Steps:', len(result.path())-1)
     for action, state in result.path():
         print('Action:', action)
         print_state(state)
 
     print('--- IDS ---')
-    result = iterative_limited_depth_first(problem)
+    result = iterative_limited_depth_first(problem, graph_search=True)
     print('Steps:', len(result.path())-1)
     for action, state in result.path():
         print('Action:', action)
