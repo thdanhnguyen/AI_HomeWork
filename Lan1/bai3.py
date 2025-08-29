@@ -1,11 +1,15 @@
 from simpleai.search import SearchProblem, breadth_first, depth_first, uniform_cost, limited_depth_first, iterative_limited_depth_first
-import random
 
 GOAL_STATE = ((1, 2, 3),
               (8, 0, 4),
               (7, 6, 5))
 
+initial_state = ((1, 2, 3),
+                 (8, 7, 4),
+                 (0, 6, 5))
+
 ACTIONS = ['UP', 'DOWN', 'LEFT', 'RIGHT']
+
 
 class EightPuzzleProblem(SearchProblem):
     def __init__(self, initial_state):
@@ -44,55 +48,53 @@ class EightPuzzleProblem(SearchProblem):
     def cost(self, state, action, state2):
         return 1
 
-def random_initial_state():
-    return ((1, 2, 3), (8, 4, 5), (7, 6, 0))
 
 def print_state(state):
     for row in state:
         print(' '.join(str(i) if i != 0 else ' ' for i in row))
     print()
 
+
 def main():
-    initial = random_initial_state()
     print('Initial State:')
-    print_state(initial)
-    problem = EightPuzzleProblem(initial)
+    print_state(initial_state)
+    problem = EightPuzzleProblem(initial_state)
 
     print('--- BFS ---')
-
-    result = breadth_first(problem, graph_search=True)
-    print('Steps:', len(result.path())-1)
+    result = breadth_first(problem)
+    print('Steps:', len(result.path()) - 1)
     for action, state in result.path():
         print('Action:', action)
         print_state(state)
 
     print('--- DFS ---')
-    result = depth_first(problem, graph_search=True)
-    print('Steps:', len(result.path())-1)
+    result = depth_first(problem)
+    print('Steps:', len(result.path()) - 1)
     for action, state in result.path():
         print('Action:', action)
         print_state(state)
 
     print('--- UCS ---')
-    result = uniform_cost(problem, graph_search=True)
-    print('Steps:', len(result.path())-1)
+    result = uniform_cost(problem)
+    print('Steps:', len(result.path()) - 1)
     for action, state in result.path():
         print('Action:', action)
         print_state(state)
 
     print('--- DLS (depth=20) ---')
-    result = limited_depth_first(problem, 20, graph_search=True)
-    print('Steps:', len(result.path())-1)
+    result = limited_depth_first(problem, 20)
+    print('Steps:', len(result.path()) - 1)
     for action, state in result.path():
         print('Action:', action)
         print_state(state)
 
     print('--- IDS ---')
-    result = iterative_limited_depth_first(problem, graph_search=True)
-    print('Steps:', len(result.path())-1)
+    result = iterative_limited_depth_first(problem)
+    print('Steps:', len(result.path()) - 1)
     for action, state in result.path():
         print('Action:', action)
         print_state(state)
+
 
 if __name__ == '__main__':
     main()
