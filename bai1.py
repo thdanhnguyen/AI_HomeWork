@@ -40,16 +40,27 @@ def depth_first_search(N, A, n0, DICH):
         if neighbors: 
             for v in reversed(neighbors):
                 if v not in close:
-                    fringe.insert(0, (v, path + [v]))
+                    fringe.append((v, path + [v]))
     return "NO SOLUTION"
-def depth_limited_search(A, n0, DICH, limit):
+
+def depth_limited_search(N, A, n0, DICH, limit):
     fringe = [(n0, [n0], 0)]
+    closed = set()
     while fringe:
         n, path, depth = fringe.pop()
+        closed.add(n)
         if n in DICH:
             return f"SOLUTION path: {path}"
         if depth < limit:
-            for v in reversed(A.get(n, [])):
-                if v not in path:
+            neighbors = A.get(n, [])
+            for v in reversed(neighbors):
+                if v not in closed:
                     fringe.append((v, path + [v], depth + 1))
-    return "NO SOLUTION"
+    return None
+
+def iterative_deepening_search(N, A, n0, DICH, max_depth):
+    for limit in range(max_depth + 1):
+        result = depth_limited_search(N, A, n0, DICH, limit)
+        if result:
+            return f"IDS found at depth {limit}: {result}"
+    return "NO SOLUTION"             
