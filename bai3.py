@@ -2,8 +2,8 @@ from simpleai.search import SearchProblem, breadth_first, depth_first, uniform_c
 import random
 
 GOAL_STATE = ((1, 2, 3),
-              (4, 0, 5),
-              (6, 7, 8))
+              (8, 0, 4),
+              (7, 6, 5))
 
 ACTIONS = ['UP', 'DOWN', 'LEFT', 'RIGHT']
 
@@ -49,7 +49,6 @@ def random_initial_state():
     while True:
         random.shuffle(nums)
         state = tuple(tuple(nums[i*3:(i+1)*3]) for i in range(3))
-        # Ensure solvable
         flat = sum(state, ())
         inv = 0
         for i in range(8):
