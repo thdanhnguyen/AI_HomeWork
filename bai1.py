@@ -63,4 +63,38 @@ def iterative_deepening_search(N, A, n0, DICH, max_depth):
         result = depth_limited_search(N, A, n0, DICH, limit)
         if result:
             return f"IDS found at depth {limit}: {result}"
-    return "NO SOLUTION"             
+    return "NO SOLUTION"      
+
+graph = {
+    "A": ["B", "C"],
+    "B": ["D", "E"],
+    "C": [],
+    "D": [],
+    "E": []
+}
+N = len(graph)
+start = "A"
+goal = {"E"} 
+
+print("=== BFS ===")
+print(breath_fisrt_search(N, graph, start, "E"))
+
+print("\n=== DFS ===")
+print(depth_first_search(N, graph, start, goal))
+
+print("\n=== DLS (limit=2) ===")
+print(depth_limited_search(N, graph, start, goal, limit=2))
+
+print("\n=== IDS (max_depth=4) ===")
+print(iterative_deepening_search(N, graph, start, goal, max_depth=4))
+
+weighted_graph = {
+    "A": [("B", 1), ("C", 5)],
+    "B": [("D", 2), ("E", 1)],
+    "C": [],
+    "D": [],
+    "E": []
+}
+print("\n=== UCS ===")
+print(uniform_cost_search(N, weighted_graph, start, goal))
+       
