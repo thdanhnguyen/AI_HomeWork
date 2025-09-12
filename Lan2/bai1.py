@@ -8,8 +8,14 @@ GOAL_STATE = ((1, 2, 3),
 ACTIONS = ['UP', 'DOWN', 'LEFT', 'RIGHT']
 
 class EightPuzzleProblem(SearchProblem):
-    def __init__(self, initial_state):
+    def __init__(self, initial_state, heuristic_func=None):
         super().__init__(initial_state)
+        self.heuristic_func = heuristic_func
+
+    def heuristic(self, state):
+        if self.heuristic_func:
+            return self.heuristic_func(state)
+        return 0
 
     def actions(self, state):
         row, col = [(ix, iy) for ix, row in enumerate(state) for iy, i in enumerate(row) if i == 0][0]
@@ -19,6 +25,11 @@ class EightPuzzleProblem(SearchProblem):
         if col > 0: possible_actions.append('LEFT')
         if col < 2: possible_actions.append('RIGHT')
         return possible_actions
+
+    def heuristic(self, state):
+        if self.heuristic_func:
+            return self.heuristic_func(state)
+        return 0
 
     def result(self, state, action):
         row, col = [(ix, iy) for ix, row in enumerate(state) for iy, i in enumerate(row) if i == 0][0]
@@ -74,28 +85,40 @@ def main():
 
     problem = EightPuzzleProblem(initial_state)
 
-    # Chạy với heuristic h1
+    # Chạy với heuristic h1 (Misplaced Tiles)
     print("=== A* với Heuristic h1 (Misplaced Tiles) ===")
+    problem1 = EightPuzzleProblem(initial_state, h1)
     start = time.time()
-    result1 = astar(problem, graph_search=True, heuristic=h1)
+    result1 = astar(problem1, graph_search=True)
     end = time.time()
     print("Steps:", len(result1.path()) - 1)
     print("Time:", round(end - start, 4), "s")
 
-    # Chạy với heuristic h2
+    # Chạy với heuristic h2 (Manhattan Distance)
     print("\n=== A* với Heuristic h2 (Manhattan Distance) ===")
+    problem2 = EightPuzzleProblem(initial_state, h2)
     start = time.time()
-    result2 = astar(problem, graph_search=True, heuristic=h2)
+    result2 = astar(problem2, graph_search=True)
     end = time.time()
     print("Steps:", len(result2.path()) - 1)
     print("Time:", round(end - start, 4), "s")
 
-    # In thử đường đi (chỉ in với h2 cho ngắn)
+    # In đường đi với h2
     print("\n=== Đường đi với h2 ===")
     for action, state in result2.path():
-        print("Action:", action)
+        if action:  # bỏ qua trạng thái đầu tiên vì action=None
+            print("Action:", action)
+        print_state(state)
+    print("Steps:", len(result2.path()) - 1)
+    print("Time:", round(end - start, 4), "s")
+
+    # In đường đi với h2
+    print("\n=== Đường đi với h2 ===")
+    for action, state in result2.path():
+        if action:  # bỏ qua trạng thái đầu tiên vì action=None
+            print("Action:", action)
         print_state(state)
 
 
-if __name__ == '__main__':
+if _name_ == '_main_':
     main()
