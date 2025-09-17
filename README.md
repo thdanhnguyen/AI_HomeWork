@@ -26,7 +26,7 @@
 ---
 
 ## Bài 4: Heuristic nâng cao (Value, Hill Climbing, SA, GA)
-   - Mở rộng Bài 2 và Bài 3 bằng cách áp dụng thêm các kỹ thuật heuristic:
+   - Mở rộng Bài 2 và Bài 3 ở Lần 2 bằng cách áp dụng thêm các kỹ thuật heuristic:
 
       - Value ordering function: sắp xếp giá trị theo hàm value.
 
