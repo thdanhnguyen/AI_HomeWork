@@ -1,18 +1,73 @@
-import time
-from collections import deque
-import copy
+# Bài 3: N-Queens (N=5) - Backtracking + AC3 (so sánh)
 
-# --- CSP model for N-Queens ---
-class NQueensCSP:
-    def __init__(self, n):
-        self.n = n
-        self.variables = list(range(n))  # mỗi biến là 1 hàng, giá trị là cột
-        self.domains = {v: set(range(n)) for v in self.variables}
-        self.constraints = {}
-        for v1 in self.variables:
-            for v2 in self.variables:
-                if v1 != v2:
-                    self.constraints[(v1, v2)] = self.queen_constraint
+import time
+from simpleai.search import CspProblem, backtrack
+from collections import deque
+
+constraint_calls = 0
+
+def queens_constraint(variables, values):
+    global constraint_calls
+    constraint_calls += 1
+    for i in range(len(values)):
+        for j in range(i+1, len(values)):
+            if values[i] == values[j] or abs(i-j) == abs(values[i]-values[j]):
+                return False
+    return True
+
+# AC3 tự cài đặt cho simpleai
+def ac3_simpleai(problem):
+    queue = deque([(xi, xj) for xi in problem.variables for xj in problem.variables if xi != xj])
+    while queue:
+        xi, xj = queue.popleft()
+        if revise(problem, xi, xj):
+            if not problem.domains[xi]:
+                return False
+            for xk in problem.variables:
+                if xk != xi and xk != xj:
+                    queue.append((xk, xi))
+    return True
+
+def revise(problem, xi, xj):
+    revised = False
+    to_remove = set()
+    for x in problem.domains[xi]:
+        if not any(queens_constraint([xi, xj], [x, y]) for y in problem.domains[xj]):
+            to_remove.add(x)
+            revised = True
+    problem.domains[xi] = [v for v in problem.domains[xi] if v not in to_remove]
+    return revised
+
+# Đếm số bước tìm kiếm bằng cách wrap lại hàm backtrack
+def backtrack_count(problem):
+    global search_steps
+    search_steps = 0
+    def callback(state):
+        global search_steps
+        search_steps += 1
+    return backtrack(problem, callback=callback)
+
+def solve_nqueens(n, use_ac3=False):
+    global constraint_calls
+    constraint_calls = 0
+    variables = list(range(n))
+    domains = {v: list(range(n)) for v in variables}
+    constraints = [(variables, queens_constraint)]
+    problem = CspProblem(variables, domains, constraints)
+    if use_ac3:
+        ac3_simpleai(problem)
+    start = time.time()
+    result = backtrack(problem)
+    end = time.time()
+    return result, end-start, constraint_calls
+
+if __name__ == "__main__":
+    print("--- N-Queens (N=5) CSP: So sánh Backtracking và Backtracking + AC3 ---")
+    for ac3_flag in [False, True]:
+        result, t, steps = solve_nqueens(5, use_ac3=ac3_flag)
+        print(f"AC3 = {ac3_flag}: {result}")
+        print(f"  Time: {t:.4f}s, Steps: {steps}\n")
+
 
     def queen_constraint(self, row1, col1, row2, col2):
         # Không cùng cột, không cùng đường chéo
@@ -80,15 +135,39 @@ def order_domain_values(var, assignment, csp, domains):
 # --- Main experiment ---
 def run_experiment(n, ac3_enabled):
     csp = NQueensCSP(n)
-    domains = {v: set(range(n)) for v in csp.variables}
-    steps = [0]
-    start = time.time()
-    result, steps = backtrack({}, csp, domains, ac3_enabled, steps)
-    end = time.time()
-    print(f"N={n}, AC3={'ON' if ac3_enabled else 'OFF'}: {result}")
-    print(f"Time: {end-start:.4f}s, Steps: {steps[0]}")
 
-if __name__ == "__main__":
-    print("--- Backtracking + AC3 cho N-Queens (N=5) ---")
-    run_experiment(5, ac3_enabled=True)
-    run_experiment(5, ac3_enabled=False)
+    # Sử dụng simpleai cho giải bài toán N-Queens với backtracking và backtracking + AC3
+    import time
+    from simpleai.search import CspProblem, backtrack
+
+    def queens_constraint(variables, values):
+        for i in range(len(values)):
+            for j in range(i+1, len(values)):
+                if values[i] == values[j] or abs(i-j) == abs(values[i]-values[j]):
+                    return False
+        return True
+
+    def solve_nqueens_simpleai(n, use_ac3=False):
+        variables = list(range(n))
+        domains = {v: list(range(n)) for v in variables}
+        constraints = [(
+            variables,
+            queens_constraint
+        )]
+        problem = CspProblem(variables, domains, constraints)
+        start = time.time()
+        if use_ac3:
+            ac3_simpleai(problem)
+            result = backtrack(problem)
+            method = "Backtracking + AC3 (simpleai)"
+        else:
+            result = backtrack(problem)
+            method = "Backtracking (simpleai)"
+        end = time.time()
+        print(f"{method}: {result}")
+        print(f"Time: {end-start:.4f}s")
+
+    if __name__ == "__main__":
+        print("--- N-Queens (N=5) với simpleai ---")
+        solve_nqueens_simpleai(5, use_ac3=False)
+        solve_nqueens_simpleai(5, use_ac3=True)
