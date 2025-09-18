@@ -1,70 +1,55 @@
+from simpleai.search import CspProblem, backtrack
 import time
 
-class NQueens:
-    def __init__(self, n):
-        self.n = n
-        self.solutions = []
-        self.checks = 0  # đếm số lần kiểm tra is_safe
+def constraint(variables, values):
+    row1, row2 = variables
+    col1, col2 = values
+    # Không cùng cột
+    if col1 == col2:
+        return False
+    # Không cùng đường chéo
+    if abs(row1 - row2) == abs(col1 - col2):
+        return False
+    return True
 
-    def is_safe(self, queens, row, col):
-        self.checks += 1
-        for r, c in enumerate(queens):
-            if c == col or abs(r - row) == abs(c - col):
-                return False
-        return True
+def solve_with_strategy(N, variable_heuristic=None, value_heuristic=None):
+    variables = list(range(N))  # mỗi biến là 1 row
+    domains = {v: list(range(N)) for v in variables}  # col từ 0..N-1
 
-    # --- Chiến lược 1: Cơ bản ---
-    def solve_basic(self, row=0, queens=[]):
-        if row == self.n:
-            self.solutions.append(queens[:])
-            return
-        for col in range(self.n):
-            if self.is_safe(queens, row, col):
-                queens.append(col)
-                self.solve_basic(row + 1, queens)
-                queens.pop()
+    constraints = []
+    for i in range(N):
+        for j in range(i + 1, N):
+            constraints.append(((i, j), constraint))
 
-    # --- Chiến lược 2: MRV (chọn hàng có ít lựa chọn hợp lệ nhất) ---
-    def solve_mrv(self, queens=[]):
-        row = len(queens)
-        if row == self.n:
-            self.solutions.append(queens[:])
-            return
+    problem = CspProblem(variables, domains, constraints)
 
-        # với hàng hiện tại, tính danh sách cột hợp lệ
-        candidates = [c for c in range(self.n) if self.is_safe(queens, row, c)]
-
-        # sắp xếp cột theo số lựa chọn còn lại cho hàng sau (MRV)
-        candidates.sort(key=lambda c: self.future_moves(queens, row, c))
-
-        for col in candidates:
-            self.solve_mrv(queens + [col])
-
-    def future_moves(self, queens, row, col):
-        # tạm đặt hậu vào (row, col) và tính số cột hợp lệ cho hàng tiếp theo
-        temp = queens + [col]
-        next_row = row + 1
-        return sum(1 for c in range(self.n) if self.is_safe(temp, next_row, c)) if next_row < self.n else 0
-
-
-def test_strategies(n):
-    print(f"\n--- N = {n} ---")
-
-    # Basic
-    nq = NQueens(n)
     start = time.time()
-    nq.solve_basic()
+    result = backtrack(
+        problem,
+        variable_heuristic=variable_heuristic,
+        value_heuristic=value_heuristic,
+    )
     end = time.time()
-    print(f"Basic Strategy: {len(nq.solutions)} solutions found in {end - start:.4f} seconds, checks={nq.checks}")
 
-    # MRV
-    nq = NQueens(n)
-    start = time.time()
-    nq.solve_mrv()
-    end = time.time()
-    print(f"MRV Strategy: {len(nq.solutions)} solutions found in {end - start:.4f} seconds, checks={nq.checks}")
-
+    return result, end - start
 
 if __name__ == "__main__":
-    test_strategies(5)  # chạy thử với N=5
-    test_strategies(8)  # chạy thử với N=8
+    N = 5
+
+    # Basic Strategy
+    res_basic, t_basic = solve_with_strategy(N)
+    print("--- Basic Strategy ---")
+    print("Solution:", res_basic)
+    print("Time:", t_basic)
+
+    # MRV Strategy (Minimum Remaining Values)
+    res_mrv, t_mrv = solve_with_strategy(N, variable_heuristic="mrv")
+    print("\n--- MRV Strategy ---")
+    print("Solution:", res_mrv)
+    print("Time:", t_mrv)
+
+    # Degree heuristic
+    res_deg, t_deg = solve_with_strategy(N, variable_heuristic="degree")
+    print("\n--- Degree Strategy ---")
+    print("Solution:", res_deg)
+    print("Time:", t_deg)
