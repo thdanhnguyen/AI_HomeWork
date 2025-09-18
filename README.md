@@ -18,8 +18,8 @@
 
    - Thực hiện thử nghiệm với hai cấu hình:
 
-      - acycurry = True (có kiểm tra AC3).
-      - acycurry = False (không kiểm tra AC3).
+      - Arc Consistency = True (có kiểm tra AC3).
+      - Arc Consistency = False (không kiểm tra AC3).
 
    - So sánh kết quả, tốc độ và số bước tìm kiếm giữa hai chế độ.
 
