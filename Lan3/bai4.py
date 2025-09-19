@@ -244,7 +244,7 @@ def print_solution(solution):
 #----------------------------------------
 # Main
 #----------------------------------------
-if _name_ == "_main_":
+if __name__ == "__main__":
     print(f"Giải bài toán {N} quân hậu bằng các thuật toán:")
     
     # CSP với Backtracking
