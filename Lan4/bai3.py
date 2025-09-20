@@ -35,7 +35,7 @@ def uncle(x, z):
 
 if __name__ == '__main__':
     # Đọc dữ liệu từ file JSON
-    with open('family.json') as f:
+    with open('Lan4/family.json') as f:
         d = json.load(f)
 
     # Nạp dữ liệu vào facts
