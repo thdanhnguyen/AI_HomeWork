@@ -1,3 +1,12 @@
+import collections
+import collections.abc
+
+# Patch cho Python 3.10+
+if not hasattr(collections, "Iterator"):
+    collections.Iterator = collections.abc.Iterator
+if not hasattr(collections, "Hashable"):
+    collections.Hashable = collections.abc.Hashable
+
 from kanren import run, var, facts
 from kanren.core import lall
 from kanren.assoccomm import eq_assoccomm as eq_assoc
